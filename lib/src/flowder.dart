@@ -50,8 +50,11 @@ class Flowder {
             responseType: ResponseType.stream,
             headers: {HttpHeaders.rangeHeader: 'bytes=$lastProgress-'}),
       );
-      final _total = int.tryParse(
-              response.headers.value(HttpHeaders.contentLengthHeader)!) ??
+
+      var contentLengthHeader = response.headers.value(HttpHeaders.contentLengthHeader);
+
+      final _total = contentLengthHeader == null ? 0 : int.tryParse(
+          contentLengthHeader!) ??
           0;
       final sink = await file.open(mode: FileMode.writeOnlyAppend);
       subscription = response.data.stream.listen(
